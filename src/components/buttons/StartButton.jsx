@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
         fontSize: 56,
         fontWeight: "bold",
         textAlign: "center",
-        //font-family: 'Press Start 2P', cursive;
+        fontFamily: "simon"
     }
 });
 
