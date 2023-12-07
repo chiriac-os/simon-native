@@ -8,11 +8,11 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
  * @returns {React.ForwardRefExoticComponent<React.RefAttributes<React.JSX.Element>>}
  */
 const ColoredButton = React.forwardRef((props, ref) => {
-    const { color, onPress } = props;
+    const { id, color, onPress } = props;
     
     return (
         <View style={styles().view}>
-            <TouchableOpacity ref={ref} style={styles(color).button} onPress={onPress} />
+            <TouchableOpacity id={id} ref={ref} style={styles(color).button} onPress={onPress} />
         </View>
     );
 });

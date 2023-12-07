@@ -1,5 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import Board from "../components/game/Board";
 import StartButton from "../components/buttons/StartButton";
 import Header from "../components/header/Header";
@@ -16,6 +16,13 @@ function Game() {
     const [started, setStarted] = useState(false);
     const [over, setOver] = useState(false);
     const [level, setLevel] = useState(0);
+    const gamePattern = useRef([]);
+    const userClickedPattern = useRef([]);
+
+    /**
+     * Game variables
+     */
+    const buttonColors = ['red', 'blue', 'green', 'yellow'];
 
     /**
      * Memoize game status
@@ -53,8 +60,16 @@ function Game() {
     /**
      * Sets the level to 0
      */
-    const resetLevel = () => {
+    const resetGame = () => {
         setLevel(0);
+        gamePattern.current = [];
+    }
+
+    /**
+     * Resets the user clicked pattern
+     */ 
+    const resetPattern = () => {
+        userClickedPattern.current = [];
     }
 
     /**
@@ -79,14 +94,24 @@ function Game() {
     }, [over]);
 
     /**
+     * Handles user click pattern
+     */
+    const handleUserClickedPattern = (prop) => {
+        userClickedPattern.current.push(prop);
+    };
+
+    /**
      * Starts the game
      */
     const startGame = () => {
-        if (!started) {
-            callNextSequence();
+        if (!over) {
+            console.log("Game started!");
+            nextSequence();
             handleStart(true);
+        } else {
+            handleOver(false);
+            startGame();
         }
-        if (over) handleOver(false);
     }
 
     /**
@@ -94,14 +119,54 @@ function Game() {
      */
     const endGame = () => {
         handleOver(false);
-        resetLevel();
+        handleStart(false);
+        resetGame();
     }
 
-    const callNextSequence = () => {
-        // Increase level
+    const nextSequence = () => {
+        // Increase the level
         nextLevel();
 
-        return Math.floor(Math.random() * 4);
+        // Generate a random color
+        const randomNumber = Math.floor(Math.random() * 4);
+        const randomChosenColor = buttonColors[randomNumber];
+
+        // Push the random color in the game pattern
+        gamePattern.current.push(randomChosenColor);
+        console.log("Chosen color in game.jsx: ", randomChosenColor);
+
+        // Return the random color for the board child component
+        return randomChosenColor;
+    }
+
+    /**
+     * Check if the given answer is correct, otherwise handles gameover
+     * @param {number} currentLevel 
+     */
+    const checkAnswer = () => {
+        console.log("I was called from a child");
+        console.log("gamePattern: ", gamePattern.current);
+        console.log("userClickedPattern: ", userClickedPattern.current);
+        // If the last push in the 'gamePattern' and in the 'userClickedPattern' are the same, will continue
+        console.log("itera", userClickedPattern.current.length, getLevel)
+        if (userClickedPattern.current[userClickedPattern.current.length - 1] === gamePattern.current[userClickedPattern.current.length - 1]) {
+            console.log("success");
+            // If the user got the last color right, will continue
+            if (userClickedPattern.current.length === getLevel) {
+                console.log("Success!");
+                setTimeout(() => {
+                    nextSequence();
+                    resetPattern();
+                }, 1000);
+
+                clearTimeout();
+            }
+        } else {
+            console.log("wrong");
+            handleOver(true);
+            resetGame();
+            resetPattern();
+        }
     }
 
     return (
@@ -112,9 +177,9 @@ function Game() {
             <View style={styles.board}>
                 <Board
                     started={getStarted}
-                    callNextSequence={callNextSequence}
-                    handleOver={handleOver}
-                    startOver={endGame} />
+                    handleUserClickedPattern={handleUserClickedPattern}
+                    checkAnswer={checkAnswer}
+                />
             </View>
             <View style={styles.start}>
                 {!started && <StartButton title="Start" callback={startGame} />}
