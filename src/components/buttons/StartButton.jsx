@@ -1,4 +1,4 @@
-import { Pressable, Text, StyleSheet } from "react-native";
+import { Pressable, Text, StyleSheet, TouchableHighlight } from "react-native";
 
 /**
  * Render a start button
@@ -8,9 +8,9 @@ import { Pressable, Text, StyleSheet } from "react-native";
  */
 function StartButton({ title, callback }) {
     return (
-        <Pressable style={styles.button} onPress={callback}>
+        <TouchableHighlight style={styles.button} underlayColor="#F7ECB5" onPress={callback}>
             <Text style={styles.text}>{title}</Text>
-        </Pressable>
+        </TouchableHighlight>
     );
 }
 

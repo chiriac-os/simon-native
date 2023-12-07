@@ -15,7 +15,7 @@ function Game() {
     const [show, setShow] = useState(true);
     const [started, setStarted] = useState(false);
     const [over, setOver] = useState(false);
-    const [level, setLevel] = useState(1);
+    const [level, setLevel] = useState(0);
 
     /**
      * Memoize game status
@@ -29,6 +29,11 @@ function Game() {
             return "over";
         }
     }, [show, started, over]);
+
+    /**
+     * Memoize started state
+     */
+    const getStarted = useMemo(() => started, [started]);
 
     /**
      * Level getter
@@ -49,7 +54,7 @@ function Game() {
      * Sets the level to 0
      */
     const resetLevel = () => {
-        setLevel(1);
+        setLevel(0);
     }
 
     /**
@@ -74,20 +79,30 @@ function Game() {
     }, [over]);
 
     /**
-     * Starts the game and sets the game over on false
+     * Starts the game
      */
-    const startGame = useCallback(() => {
-        handleStart(true);
-        handleOver(false);
-    });
+    const startGame = () => {
+        if (!started) {
+            callNextSequence();
+            handleStart(true);
+        }
+        if (over) handleOver(false);
+    }
 
     /**
-     * Ends the game and sets the game over on true
+     * Start over function restarts the values
      */
-    const endGame = useCallback(() => {
-        handleStart(false);
-        handleOver(true);
-    });
+    const endGame = () => {
+        handleOver(false);
+        resetLevel();
+    }
+
+    const callNextSequence = () => {
+        // Increase level
+        nextLevel();
+
+        return Math.floor(Math.random() * 4);
+    }
 
     return (
         <>
@@ -95,14 +110,15 @@ function Game() {
                 <Header gameStatus={gameStatus} level={getLevel} />
             </View>
             <View style={styles.board}>
-                <Board />
+                <Board
+                    started={getStarted}
+                    callNextSequence={callNextSequence}
+                    handleOver={handleOver}
+                    startOver={endGame} />
             </View>
             <View style={styles.start}>
-                {(!started || over) ? (
-                    <StartButton title="Start" callback={startGame} />
-                ) : (
-                    <StartButton title="Restart" callback={endGame} />
-                )}
+                {!started && <StartButton title="Start" callback={startGame} />}
+                {over && <StartButton title="Restart" callback={endGame} />}
             </View>
         </>
     )
@@ -113,11 +129,11 @@ const styles = StyleSheet.create({
         paddingVertical: 50,
     },
     board: {
-        marginBottom: 100,
+        marginBottom: 50,
     },
     start: {
         position: "absolute",
-        bottom: 50,
+        bottom: 0,
     }
 });
 
