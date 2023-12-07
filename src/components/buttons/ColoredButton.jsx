@@ -10,14 +10,15 @@ function ColoredButton({ color, ref, onPress }) {
 
 const styles = (color) => StyleSheet.create({
     view: {
-
+        borderWidth: 10,
+        borderColor: "#000",
+        borderRadius: 20,
+        margin: 25,
     },
     button: {
         backgroundColor: color,
-        margin: 25,
         height: 200,
         width: 200,
-        border: "10px solid black",
         borderRadius: 20,
     },
 });
