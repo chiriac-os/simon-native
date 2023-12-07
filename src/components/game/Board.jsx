@@ -2,6 +2,10 @@ import { useState, useRef } from "react";
 import { View, StyleSheet } from "react-native";
 import ColoredButton from "../buttons/ColoredButton";
 
+/**
+ * Render the game board
+ * @returns {JSX.Element}
+ */
 function Board() {
     /**
      * Hooks

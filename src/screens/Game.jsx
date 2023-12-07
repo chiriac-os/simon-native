@@ -1,44 +1,89 @@
 import { View, StyleSheet } from "react-native";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Board from "../components/game/Board";
 import StartButton from "../components/buttons/StartButton";
+import Header from "../components/header/Header";
 
+/**
+ * Render the game screen and its logic
+ * @returns {JSX.Element}
+ */
 function Game() {
     /**
       * Hooks
       */
-    const [game, setGame] = useState({
-        show: true,
-        started: false,
-        over: false,
-    });
+    const [show, setShow] = useState(true);
+    const [started, setStarted] = useState(false);
+    const [over, setOver] = useState(false);
+    const [level, setLevel] = useState(1);
 
+    /**
+     * Memoize game status
+     */
+    const gameStatus = useMemo(() => {
+        if (show && !started && !over) {
+            return "show";
+        } else if (started && !over) {
+            return "started";
+        } else if (!started && over) {
+            return "over";
+        }
+    }, [show, started, over]);
+
+    /**
+     * Level getter
+     * @returns {number}
+     */
+    const getLevel = useMemo(() => {
+        return level;
+    }, [level]);
+
+    /**
+     * Increments the level
+     */
+    const nextLevel = () => {
+        setLevel((prev) => prev + 1);
+    }
+
+    /**
+     * Sets the level to 0
+     */
+    const resetLevel = () => {
+        setLevel(1);
+    }
+
+    /**
+     * Handles show state
+     */
     const handleShow = useCallback((prop) => {
-        setGame((prevGame) => ({
-            ...prevGame,
-            show: prop,
-        }))
-    }, [game.show]);
+        setShow((prevShow) => prevShow = prop);
+    }, [show]);
 
+    /**
+     * Handles start state
+     */
     const handleStart = useCallback((prop) => {
-        setGame((prevGame) => ({
-            ...prevGame,
-            started: prop,
-        }))
-    }, [game.started]);
+        setStarted((prevStarted) => prevStarted = prop);
+    }, [started]);
 
+    /**
+     * Handles over state
+     */
     const handleOver = useCallback((prop) => {
-        setGame((prevGame) => ({
-            ...prevGame,
-            over: prop,
-        }))
-    }, [game.over]);
+        setOver((prevOver) => prevOver = prop);
+    }, [over]);
 
+    /**
+     * Starts the game and sets the game over on false
+     */
     const startGame = useCallback(() => {
         handleStart(true);
         handleOver(false);
     });
 
+    /**
+     * Ends the game and sets the game over on true
+     */
     const endGame = useCallback(() => {
         handleStart(false);
         handleOver(true);
@@ -47,13 +92,13 @@ function Game() {
     return (
         <>
             <View style={styles.header}>
-
+                <Header gameStatus={gameStatus} level={getLevel} />
             </View>
             <View style={styles.board}>
                 <Board />
             </View>
             <View style={styles.start}>
-                {(!game.started || game.over) ? (
+                {(!started || over) ? (
                     <StartButton title="Start" callback={startGame} />
                 ) : (
                     <StartButton title="Restart" callback={endGame} />
@@ -65,7 +110,7 @@ function Game() {
 
 const styles = StyleSheet.create({
     header: {
-
+        paddingVertical: 50,
     },
     board: {
         marginBottom: 100,

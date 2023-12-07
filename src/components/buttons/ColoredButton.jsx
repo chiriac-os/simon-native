@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 /**
+ * Render a colored button
  * @param {{string, function}} props
  * @param {React.Ref} ref
  * @returns {React.ForwardRefExoticComponent<React.RefAttributes<React.JSX.Element>>}

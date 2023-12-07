@@ -1,5 +1,11 @@
 import { Pressable, Text, StyleSheet } from "react-native";
 
+/**
+ * Render a start button
+ * @param {string} title
+ * @param {function} callback 
+ * @returns 
+ */
 function StartButton({ title, callback }) {
     return (
         <Pressable style={styles.button} onPress={callback}>
@@ -13,18 +19,19 @@ const styles = StyleSheet.create({
         backgroundColor: "#FEF2BF",
         margin: 25,
         height: 100,
-        width: 275,
+        width: 300,
         paddingHorizontal: 25,
         paddingVertical: 0,
         borderWidth: 10,
         borderColor: "#000",
-        borderRadius: 15
+        borderRadius: 15,
+        justifyContent: "center",
+        alignItems: "center",
     },
     text: {
-        fontSize: 56,
+        fontFamily: "simon",
+        fontSize: 28,
         fontWeight: "bold",
-        textAlign: "center",
-        fontFamily: "simon"
     }
 });
 
