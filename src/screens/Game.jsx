@@ -46,6 +46,9 @@ function Game() {
 
     return (
         <>
+            <View style={styles.header}>
+
+            </View>
             <View style={styles.board}>
                 <Board />
             </View>
@@ -61,8 +64,11 @@ function Game() {
 }
 
 const styles = StyleSheet.create({
-    board: {
+    header: {
 
+    },
+    board: {
+        marginBottom: 100,
     },
     start: {
         position: "absolute",
