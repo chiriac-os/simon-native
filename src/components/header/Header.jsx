@@ -9,9 +9,6 @@ import { StyleSheet, Text } from "react-native";
 function Header({ gameStatus, level }) {
     let title = "";
     switch (gameStatus) {
-        case "show":
-            title = "Press Start";
-            break;
         case "started":
             title = "Level " + level;
             break;

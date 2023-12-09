@@ -12,7 +12,6 @@ function Game() {
     /**
       * Hooks
       */
-    const [show, setShow] = useState(true);
     const [started, setStarted] = useState(false);
     const [over, setOver] = useState(false);
     const [level, setLevel] = useState(0);
@@ -28,14 +27,12 @@ function Game() {
      * Memoize game status
      */
     const gameStatus = useMemo(() => {
-        if (show && !started && !over) {
-            return "show";
-        } else if (started && !over) {
+        if (started && !over) {
             return "started";
-        } else if (!started && over) {
+        } else if (over) {
             return "over";
         }
-    }, [show, started, over]);
+    }, [started, over]);
 
     /**
      * Memoize started state
@@ -67,17 +64,10 @@ function Game() {
 
     /**
      * Resets the user clicked pattern
-     */ 
+     */
     const resetPattern = () => {
         userClickedPattern.current = [];
     }
-
-    /**
-     * Handles show state
-     */
-    const handleShow = useCallback((prop) => {
-        setShow((prevShow) => prevShow = prop);
-    }, [show]);
 
     /**
      * Handles start state
@@ -104,25 +94,26 @@ function Game() {
      * Starts the game
      */
     const startGame = () => {
-        if (!over) {
-            console.log("Game started!");
-            nextSequence();
-            handleStart(true);
-        } else {
-            handleOver(false);
-            startGame();
-        }
+        console.log("Game started!");
+        over && handleOver(false);
+        handleStart(true);
+        nextSequence();
     }
 
     /**
      * Start over function restarts the values
      */
     const endGame = () => {
-        handleOver(false);
+        handleOver(true);
         handleStart(false);
         resetGame();
+        resetPattern();
     }
 
+    /**
+     * Generates a random color and pushes it in the game pattern
+     * @returns {string} random color
+     */ 
     const nextSequence = () => {
         // Increase the level
         nextLevel();
@@ -133,7 +124,6 @@ function Game() {
 
         // Push the random color in the game pattern
         gamePattern.current.push(randomChosenColor);
-        console.log("Chosen color in game.jsx: ", randomChosenColor);
 
         // Return the random color for the board child component
         return randomChosenColor;
@@ -144,13 +134,8 @@ function Game() {
      * @param {number} currentLevel 
      */
     const checkAnswer = () => {
-        console.log("I was called from a child");
-        console.log("gamePattern: ", gamePattern.current);
-        console.log("userClickedPattern: ", userClickedPattern.current);
         // If the last push in the 'gamePattern' and in the 'userClickedPattern' are the same, will continue
-        console.log("itera", userClickedPattern.current.length, getLevel)
         if (userClickedPattern.current[userClickedPattern.current.length - 1] === gamePattern.current[userClickedPattern.current.length - 1]) {
-            console.log("success");
             // If the user got the last color right, will continue
             if (userClickedPattern.current.length === getLevel) {
                 console.log("Success!");
@@ -163,9 +148,7 @@ function Game() {
             }
         } else {
             console.log("wrong");
-            handleOver(true);
-            resetGame();
-            resetPattern();
+            endGame();
         }
     }
 
@@ -178,12 +161,12 @@ function Game() {
                 <Board
                     started={getStarted}
                     handleUserClickedPattern={handleUserClickedPattern}
+                    nextSequenceColor={gamePattern.current[getLevel - 1]}
                     checkAnswer={checkAnswer}
                 />
             </View>
             <View style={styles.start}>
                 {!started && <StartButton title="Start" callback={startGame} />}
-                {over && <StartButton title="Restart" callback={endGame} />}
             </View>
         </>
     )

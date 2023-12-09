@@ -1,17 +1,25 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import ColoredButton from "../buttons/ColoredButton";
 
 /**
  * Render the game board
+ * @param {boolean} started game status
+ * @param {*} restProps
  * @returns {JSX.Element}
  */
 function Board({ started, ...restProps }) {
-    const { checkAnswer, handleUserClickedPattern, handleOver, startOver } = restProps;
+    /**
+     * Props
+     * @param {function} checkAnswer function to check the user answer
+     * @param {function} handleUserClickedPattern function to handle the user clicked pattern
+     * @param {function} nextSequenceColor function to get the next sequence color
+     */ 
+    const { checkAnswer, handleUserClickedPattern, nextSequenceColor } = restProps;
+
     /**
      * Hooks
      */
-
     const red = useRef();
     const blue = useRef();
     const green = useRef();
@@ -28,12 +36,10 @@ function Board({ started, ...restProps }) {
      */
     const handleBtn = (event) => {
         // Do something only if the game has started
-        if (!started) return
+        if (!started) return;
 
-        console.log("I was clicked!")
         // Get user's choise and pushed in the user pattern 
         const userChosenColor = event.target.id;
-        console.log("userChosenColor", userChosenColor);
         handleUserClickedPattern(userChosenColor);
 
         // Call linked audio and animation for the user clicked color
@@ -44,6 +50,19 @@ function Board({ started, ...restProps }) {
         checkAnswer();
     }
 
+    /**
+     * Animates the button to show to the user next sequence color
+     */
+    const animateBtn = useCallback((color) => {
+        if (!color) return;
+
+        const btn = btnRefs.find(btn => btn.current.id === color);
+        if (!btn) return;
+
+        btn.current.animate();
+    }, [nextSequenceColor]);
+
+    animateBtn(nextSequenceColor);
 
     return (
         <>
