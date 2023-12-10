@@ -1,8 +1,9 @@
-import { View, StyleSheet } from "react-native";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { View, StyleSheet, Animated } from "react-native";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Board from "../components/game/Board";
 import StartButton from "../components/buttons/StartButton";
 import Header from "../components/header/Header";
+import { GameOverContext } from "../../context/GameOverContext";
 
 /**
  * Render the game screen and its logic
@@ -12,11 +13,12 @@ function Game() {
     /**
       * Hooks
       */
-    const [started, setStarted] = useState(false);
-    const [over, setOver] = useState(false);
+    const [gameStarted, setGameStarted] = useState(false);
+    const [gameOver, setGameOver] = useState(false);
     const [level, setLevel] = useState(0);
     const gamePattern = useRef([]);
     const userClickedPattern = useRef([]);
+    const gameOverAnimation = useRef(new Animated.Value(0)).current;
 
     /**
      * Game variables
@@ -24,20 +26,21 @@ function Game() {
     const buttonColors = ['red', 'blue', 'green', 'yellow'];
 
     /**
+     * Memoize game start and over state
+     */
+    const isGameStarted = useMemo(() => gameStarted, [gameStarted]);
+    const isGameOver = useMemo(() => gameOver, [gameOver]);
+
+    /**
      * Memoize game status
      */
     const gameStatus = useMemo(() => {
-        if (started && !over) {
+        if (isGameStarted && !isGameOver) {
             return "started";
-        } else if (over) {
+        } else if (isGameOver) {
             return "over";
         }
-    }, [started, over]);
-
-    /**
-     * Memoize started state
-     */
-    const getStarted = useMemo(() => started, [started]);
+    }, [isGameStarted, isGameOver]);
 
     /**
      * Level getter
@@ -69,19 +72,19 @@ function Game() {
         userClickedPattern.current = [];
     }
 
-    /**
-     * Handles start state
-     */
-    const handleStart = useCallback((prop) => {
-        setStarted((prevStarted) => prevStarted = prop);
-    }, [started]);
+    // /**
+    //  * Handles start state
+    //  */
+    const handleGameStart = useCallback((prop) => {
+        setGameStarted((prevStarted) => prevStarted = prop);
+    }, [gameStarted]);
 
     /**
      * Handles over state
      */
-    const handleOver = useCallback((prop) => {
-        setOver((prevOver) => prevOver = prop);
-    }, [over]);
+    const handleGameOver = useCallback((prop) => {
+        setGameOver((prevOver) => prevOver = prop);
+    }, [gameOver]);
 
     /**
      * Handles user click pattern
@@ -95,17 +98,18 @@ function Game() {
      */
     const startGame = () => {
         console.log("Game started!");
-        over && handleOver(false);
-        handleStart(true);
+        isGameOver && handleGameOver(false);
+        handleGameStart(true);
         nextSequence();
     }
 
     /**
-     * Start over function restarts the values
+     * Handles game over
+     * Sets the game over state to true, the game start state to false, and resets the game and the pattern
      */
     const endGame = () => {
-        handleOver(true);
-        handleStart(false);
+        handleGameOver(true);
+        handleGameStart(false);
         resetGame();
         resetPattern();
     }
@@ -113,7 +117,7 @@ function Game() {
     /**
      * Generates a random color and pushes it in the game pattern
      * @returns {string} random color
-     */ 
+     */
     const nextSequence = () => {
         // Increase the level
         nextLevel();
@@ -142,37 +146,80 @@ function Game() {
                 nextSequence();
             }
         } else {
-            console.log("wrong");
+            console.log("Wrong!!");
             endGame();
         }
     }
 
+    /**
+     * Handles game over animation to change the background color to red when user loses
+     */
+    const handleGameOverAnimation = useCallback(() => {
+        Animated.sequence([
+            Animated.timing(gameOverAnimation, {
+                toValue: 1,
+                duration: 200,
+                useNativeDriver: false,
+            }),
+            Animated.timing(gameOverAnimation, {
+                toValue: 0,
+                duration: 200,
+                useNativeDriver: false,
+            })
+        ]).start();
+    }, [gameOver]);
+
+    /**
+     * Interpolates the background color for the game over animation
+     */
+    const handleBackgroundColor = gameOverAnimation.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['#011F3F', 'red']
+    });
+
+    /**
+     * Handles game over animation when the game is over
+     */ 
+    useLayoutEffect(() => {
+        if (isGameOver) {
+            handleGameOverAnimation();
+        }
+    }, [gameOver]);
+
     return (
-        <>
-            <View style={styles.header}>
-                <Header gameStatus={gameStatus} level={getLevel} />
-            </View>
-            <View style={styles.board}>
-                <Board
-                    started={getStarted}
-                    level={getLevel}
-                    handleUserClickedPattern={handleUserClickedPattern}
-                    nextSequenceColor={gamePattern.current[getLevel - 1]}
-                    checkAnswer={checkAnswer}
-                />
-            </View>
-            <View style={styles.start}>
-                {started ? 
-                    <StartButton title="Start" callback={startGame} disabled={true} />
-                :
-                    <StartButton title="Start" callback={startGame} disabled={false} />
-                }
-            </View>
-        </>
+        <GameOverContext.Provider value={isGameOver}>
+            <Animated.View style={[styles.container, { backgroundColor: handleBackgroundColor }]}>
+                <View style={styles.header}>
+                    <Header gameStatus={gameStatus} level={getLevel} />
+                </View>
+                <View style={styles.board}>
+                    <Board
+                        started={isGameStarted}
+                        level={getLevel}
+                        handleUserClickedPattern={handleUserClickedPattern}
+                        nextSequenceColor={gamePattern.current[getLevel - 1]}
+                        checkAnswer={checkAnswer}
+                    />
+                </View>
+                <View style={styles.start}>
+                    {isGameStarted ?
+                        <StartButton title="Start" callback={startGame} disabled={true} />
+                        :
+                        <StartButton title="Start" callback={startGame} disabled={false} />
+                    }
+                </View>
+            </Animated.View>
+        </GameOverContext.Provider>
     )
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        //backgroundColor: '#011F3F',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     header: {
         paddingVertical: 50,
     },
