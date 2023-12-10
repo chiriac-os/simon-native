@@ -1,6 +1,7 @@
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import ColoredButton from "../buttons/ColoredButton";
+import { useTimeout } from "../../../hooks/useTimeout";
 
 /**
  * Render the game board
@@ -11,11 +12,12 @@ import ColoredButton from "../buttons/ColoredButton";
 function Board({ started, ...restProps }) {
     /**
      * Props
+     * @param {number} level game level
      * @param {function} checkAnswer function to check the user answer
      * @param {function} handleUserClickedPattern function to handle the user clicked pattern
      * @param {function} nextSequenceColor function to get the next sequence color
      */ 
-    const { checkAnswer, handleUserClickedPattern, nextSequenceColor } = restProps;
+    const { level, checkAnswer, handleUserClickedPattern, nextSequenceColor } = restProps;
 
     /**
      * Hooks
@@ -31,48 +33,51 @@ function Board({ started, ...restProps }) {
     const btnRefs = [red, blue, green, yellow];
 
     /**
-     * Handles click event over the colors
-     * @param {MouseEvent} event 
+     * Handles press event over the colors
+     * @param {string} id color id from the button ref
      */
-    const handleBtn = (event) => {
-        // Do something only if the game has started
+    const handleBtn = (id) => {
+        // Does nothing if the game is not started
         if (!started) return;
 
-        // Get user's choise and pushed in the user pattern 
-        const userChosenColor = event.target.id;
+        // Gets the user's choise and pushed in the user pattern and checks the answer
+        const userChosenColor = id;
         handleUserClickedPattern(userChosenColor);
 
         // Call linked audio and animation for the user clicked color
         //playSound(userChosenColor);
-        //animatePress(userChosenColor);
 
-        // Check game pattern
         checkAnswer();
     }
 
     /**
      * Animates the button to show to the user next sequence color
+     * @param {string} color
      */
     const animateBtn = useCallback((color) => {
         if (!color) return;
 
         const btn = btnRefs.find(btn => btn.current.id === color);
         if (!btn) return;
-
         btn.current.animate();
     }, [nextSequenceColor]);
 
-    animateBtn(nextSequenceColor);
+    /**
+     * Custom hook to animate the button after 1 second on level change
+     */
+    useTimeout(() => {
+        animateBtn(nextSequenceColor);
+    }, 1000, [level]);
 
     return (
         <>
             <View style={styles.row}>
-                <ColoredButton id="green" ref={green} color="green" onPress={handleBtn} />
-                <ColoredButton id="red" ref={red} color="red" onPress={handleBtn} />
+                <ColoredButton id="green" ref={green} color="green" onPress={(id) => handleBtn(id)} />
+                <ColoredButton id="red" ref={red} color="red" onPress={(id) => handleBtn(id)} />
             </View>
             <View style={styles.row}>
-                <ColoredButton id="yellow" ref={yellow} color="yellow" onPress={handleBtn} />
-                <ColoredButton id="blue" ref={blue} color="blue" onPress={handleBtn} />
+                <ColoredButton id="yellow" ref={yellow} color="yellow" onPress={(id) => handleBtn(id)} />
+                <ColoredButton id="blue" ref={blue} color="blue" onPress={(id) => handleBtn(id)} />
             </View>
         </>
     )

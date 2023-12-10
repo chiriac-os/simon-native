@@ -131,7 +131,6 @@ function Game() {
 
     /**
      * Check if the given answer is correct, otherwise handles gameover
-     * @param {number} currentLevel 
      */
     const checkAnswer = () => {
         // If the last push in the 'gamePattern' and in the 'userClickedPattern' are the same, will continue
@@ -139,12 +138,8 @@ function Game() {
             // If the user got the last color right, will continue
             if (userClickedPattern.current.length === getLevel) {
                 console.log("Success!");
-                setTimeout(() => {
-                    nextSequence();
-                    resetPattern();
-                }, 1000);
-
-                clearTimeout();
+                resetPattern();
+                nextSequence();
             }
         } else {
             console.log("wrong");
@@ -160,6 +155,7 @@ function Game() {
             <View style={styles.board}>
                 <Board
                     started={getStarted}
+                    level={getLevel}
                     handleUserClickedPattern={handleUserClickedPattern}
                     nextSequenceColor={gamePattern.current[getLevel - 1]}
                     checkAnswer={checkAnswer}

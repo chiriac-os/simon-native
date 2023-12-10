@@ -8,27 +8,42 @@ import { StyleSheet, Text } from "react-native";
  */
 function Header({ gameStatus, level }) {
     let title = "";
+    let subtitle = "";
     switch (gameStatus) {
         case "started":
             title = "Level " + level;
+            subtitle = "";
             break;
         case "over":
             title = "Game Over";
+            subtitle = "Press Start to play again";
             break;
         default:
-            title = "Press Start";
+            title = "Simon Game";
+            subtitle = "Press Start to play";
             break;
     }
 
-    return <Text style={styles.header}>{title}</Text>
+    return (
+        <>
+            <Text style={[styles.header, styles.title]}>{title}</Text>
+            <Text style={[styles.header, styles.subtitle]}>{subtitle}</Text>
+        </>
+    )
 }
 
 const styles = StyleSheet.create({
     header: {
         fontFamily: "simon",
-        fontSize: 32,
         margin: 5,
+        textAlign: "center",
         color: "#FEF2BF"
+    },
+    title: {
+        fontSize: 32,
+    },
+    subtitle: {
+        fontSize: 16,
     }
 });
 

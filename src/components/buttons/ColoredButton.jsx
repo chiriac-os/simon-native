@@ -1,5 +1,5 @@
 import React, { useImperativeHandle, useRef } from "react";
-import { StyleSheet, TouchableOpacity, View, Animated } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Animated, Pressable } from "react-native";
 import { AnimationContext } from "../../../context/AnimationContext";
 
 /**
@@ -54,7 +54,7 @@ const ColoredButton = React.forwardRef((props, ref) => {
         <AnimationContext.Provider value={{ animate }}>
             <View style={styles().view}>
                 <Animated.View style={{ opacity }}>
-                    <TouchableOpacity id={id} ref={ref} style={styles(color).button} onPress={onPress} />
+                    <TouchableOpacity id={id} ref={ref} style={styles(color).button} onPress={() => onPress(id)} />
                 </Animated.View>
             </View>
         </AnimationContext.Provider>
