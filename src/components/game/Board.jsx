@@ -16,8 +16,9 @@ function Board({ started, ...restProps }) {
      * @param {function} checkAnswer function to check the user answer
      * @param {function} handleUserClickedPattern function to handle the user clicked pattern
      * @param {function} nextSequenceColor function to get the next sequence color
+     * @param {function} playSound function to play the sound
      */ 
-    const { level, checkAnswer, handleUserClickedPattern, nextSequenceColor } = restProps;
+    const { level, checkAnswer, handleUserClickedPattern, nextSequenceColor, playSound } = restProps;
 
     /**
      * Hooks
@@ -45,7 +46,7 @@ function Board({ started, ...restProps }) {
         handleUserClickedPattern(userChosenColor);
 
         // Call linked audio and animation for the user clicked color
-        //playSound(userChosenColor);
+        playSound(userChosenColor);
 
         checkAnswer();
     }
@@ -67,6 +68,7 @@ function Board({ started, ...restProps }) {
      */
     useTimeout(() => {
         animateBtn(nextSequenceColor);
+        playSound(nextSequenceColor);
     }, 1000, [level]);
 
     return (

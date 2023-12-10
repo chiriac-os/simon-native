@@ -1,9 +1,11 @@
 import { View, StyleSheet, Animated } from "react-native";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { GameOverContext } from "../../context/GameOverContext";
+import { Audio } from "expo-av";
 import Board from "../components/game/Board";
 import StartButton from "../components/buttons/StartButton";
 import Header from "../components/header/Header";
-import { GameOverContext } from "../../context/GameOverContext";
+
 
 /**
  * Render the game screen and its logic
@@ -16,6 +18,7 @@ function Game() {
     const [gameStarted, setGameStarted] = useState(false);
     const [gameOver, setGameOver] = useState(false);
     const [level, setLevel] = useState(0);
+    const sound = useRef();
     const gamePattern = useRef([]);
     const userClickedPattern = useRef([]);
     const gameOverAnimation = useRef(new Animated.Value(0)).current;
@@ -24,6 +27,13 @@ function Game() {
      * Game variables
      */
     const buttonColors = ['red', 'blue', 'green', 'yellow'];
+    const soundFiles = {
+        wrong: require('../../assets/sounds/wrong.mp3'),
+        red: require('../../assets/sounds/red.mp3'),
+        blue: require('../../assets/sounds/blue.mp3'),
+        green: require('../../assets/sounds/green.mp3'),
+        yellow: require('../../assets/sounds/yellow.mp3'),
+    }
 
     /**
      * Memoize game start and over state
@@ -179,12 +189,42 @@ function Game() {
 
     /**
      * Handles game over animation when the game is over
-     */ 
+     */
     useLayoutEffect(() => {
         if (isGameOver) {
             handleGameOverAnimation();
+            playSound("wrong");
         }
     }, [gameOver]);
+
+    /**
+     * Plays a sound depending on the given file namae
+     * @param {string} file 
+     * @returns {Promise<void>}
+     */
+    const playSound = async (file) => {
+        if (!file) return;
+        try {
+            const { sound } = await Audio.Sound.createAsync(soundFiles[file]);
+            sound.current = sound;
+
+            await sound.playAsync();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    /**
+     * Clean up sound when the component unmounts or when the sound changes
+     */
+    useEffect(() => {
+        return sound.current
+            ? () => {
+                console.log('Unloading Sound');
+                sound.unloadAsync();
+            }
+            : undefined;
+    }, [sound.current]);
 
     return (
         <GameOverContext.Provider value={isGameOver}>
@@ -198,6 +238,7 @@ function Game() {
                         level={getLevel}
                         handleUserClickedPattern={handleUserClickedPattern}
                         nextSequenceColor={gamePattern.current[getLevel - 1]}
+                        playSound={playSound}
                         checkAnswer={checkAnswer}
                     />
                 </View>
