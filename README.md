@@ -6,8 +6,8 @@ After two years, this game was re-done with React just for fun and because I rea
 
 Throughout the script there are comments which indicate what the code is doing at any given moment. 
 
-[!NOTE]
-Instructions for playing:
+> [!NOTE]
+> Instructions for playing:
 
 1. Press the Start button to play.
 2. Click with the mouse on the highlighted colour.
