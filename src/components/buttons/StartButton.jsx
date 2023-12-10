@@ -6,9 +6,9 @@ import { Pressable, Text, StyleSheet, TouchableHighlight } from "react-native";
  * @param {function} callback 
  * @returns 
  */
-function StartButton({ title, callback }) {
+function StartButton({ title, callback, disabled }) {
     return (
-        <TouchableHighlight style={styles.button} underlayColor="#F7ECB5" onPress={callback}>
+        <TouchableHighlight disabled={disabled} onPress={callback} style={[styles.button, disabled ? styles.disabled : styles.enabled]} underlayColor="#F7ECB5" >
             <Text style={styles.text}>{title}</Text>
         </TouchableHighlight>
     );
@@ -16,7 +16,6 @@ function StartButton({ title, callback }) {
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: "#FEF2BF",
         margin: 25,
         height: 100,
         width: 300,
@@ -27,6 +26,11 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         justifyContent: "center",
         alignItems: "center",
+    },
+    enabled: {
+        backgroundColor: "#FEF2BF",
+    }, disabled: {
+        backgroundColor: "#C4C4C4",
     },
     text: {
         fontFamily: "simon",

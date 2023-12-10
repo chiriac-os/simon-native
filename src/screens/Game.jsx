@@ -162,7 +162,11 @@ function Game() {
                 />
             </View>
             <View style={styles.start}>
-                {!started && <StartButton title="Start" callback={startGame} />}
+                {started ? 
+                    <StartButton title="Start" callback={startGame} disabled={true} />
+                :
+                    <StartButton title="Start" callback={startGame} disabled={false} />
+                }
             </View>
         </>
     )
@@ -175,10 +179,6 @@ const styles = StyleSheet.create({
     board: {
         marginBottom: 50,
     },
-    start: {
-        position: "absolute",
-        bottom: 0,
-    }
 });
 
 export default Game;
