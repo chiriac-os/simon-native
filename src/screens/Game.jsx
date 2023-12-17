@@ -13,15 +13,12 @@ import Header from "../components/header/Header";
  */
 function Game() {
     /**
-      * Hooks
+      * Game Hooks
       */
-    const [gameStarted, setGameStarted] = useState(false);
-    const [gameOver, setGameOver] = useState(false);
+    const [status, setStatus] = useState("pending");
     const [level, setLevel] = useState(0);
-    const sound = useRef();
     const gamePattern = useRef([]);
     const userClickedPattern = useRef([]);
-    const gameOverAnimation = useRef(new Animated.Value(0)).current;
 
     /**
      * Game variables
@@ -36,29 +33,17 @@ function Game() {
     }
 
     /**
-     * Memoize game start and over state
-     */
-    const isGameStarted = useMemo(() => gameStarted, [gameStarted]);
-    const isGameOver = useMemo(() => gameOver, [gameOver]);
-
-    /**
      * Memoize game status
      */
-    const gameStatus = useMemo(() => {
-        if (isGameStarted && !isGameOver) {
-            return "started";
-        } else if (isGameOver) {
-            return "over";
-        }
-    }, [isGameStarted, isGameOver]);
+    const gameStatus = useMemo(() => status, [status]);
+    const isGameStarted = useMemo(() => status === "started", [status]);
+    const isGameOver = useMemo(() => status === "over", [status]);
 
     /**
      * Level getter
      * @returns {number}
      */
-    const getLevel = useMemo(() => {
-        return level;
-    }, [level]);
+    const getLevel = useMemo(() => level, [level]);
 
     /**
      * Increments the level
@@ -85,16 +70,16 @@ function Game() {
     // /**
     //  * Handles start state
     //  */
-    const handleGameStart = useCallback((prop) => {
-        setGameStarted((prevStarted) => prevStarted = prop);
-    }, [gameStarted]);
+    const handleGameStart = useCallback(() => {
+        setStatus(prevStatus => prevStatus = "started");
+    }, [status]);
 
     /**
      * Handles over state
      */
-    const handleGameOver = useCallback((prop) => {
-        setGameOver((prevOver) => prevOver = prop);
-    }, [gameOver]);
+    const handleGameOver = useCallback(() => {
+        setStatus((prevStatus) => prevStatus = "over");
+    }, [status]);
 
     /**
      * Handles user click pattern
@@ -108,18 +93,16 @@ function Game() {
      */
     const startGame = () => {
         console.log("Game started!");
-        isGameOver && handleGameOver(false);
-        handleGameStart(true);
+        handleGameStart();
         nextSequence();
     }
 
     /**
      * Handles game over
-     * Sets the game over state to true, the game start state to false, and resets the game and the pattern
+     * Sets the game over state and resets the game and the pattern
      */
     const endGame = () => {
-        handleGameOver(true);
-        handleGameStart(false);
+        handleGameOver();
         resetGame();
         resetPattern();
     }
@@ -161,6 +144,13 @@ function Game() {
         }
     }
 
+
+    /**
+     * Animations and game effects hooks
+     */
+    const gameOverAnimation = useRef(new Animated.Value(0)).current;
+    const sound = useRef();
+
     /**
      * Handles game over animation to change the background color to red when user loses
      */
@@ -177,7 +167,7 @@ function Game() {
                 useNativeDriver: false,
             })
         ]).start();
-    }, [gameOver]);
+    }, [status]);
 
     /**
      * Interpolates the background color for the game over animation
@@ -195,7 +185,7 @@ function Game() {
             handleGameOverAnimation();
             playSound("wrong");
         }
-    }, [gameOver]);
+    }, [status]);
 
     /**
      * Plays a sound depending on the given file namae

@@ -10,6 +10,10 @@ function Header({ gameStatus, level }) {
     let title = "";
     let subtitle = "";
     switch (gameStatus) {
+        case "pending": 
+            title = "Simon Game";
+            subtitle = "Press Start to play";
+            break;
         case "started":
             title = "Level " + level;
             subtitle = "";
@@ -19,9 +23,7 @@ function Header({ gameStatus, level }) {
             subtitle = "Press Start to play again";
             break;
         default:
-            title = "Simon Game";
-            subtitle = "Press Start to play";
-            break;
+            throw Error(`Unkown status ${gameStatus}`);
     }
 
     return (
