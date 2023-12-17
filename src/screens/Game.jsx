@@ -1,10 +1,10 @@
 import { View, StyleSheet, Animated } from "react-native";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { GameOverContext } from "../../context/GameOverContext";
 import { Audio } from "expo-av";
 import Board from "../components/game/Board";
 import StartButton from "../components/buttons/StartButton";
 import Header from "../components/header/Header";
+import { useGame, useGameDispatch } from "../../context/GameContextProvider";
 
 
 /**
@@ -15,8 +15,8 @@ function Game() {
     /**
       * Game Hooks
       */
-    const [status, setStatus] = useState("pending");
-    const [level, setLevel] = useState(0);
+    const { status, level } = useGame();
+    const dispatch = useGameDispatch();
     const gamePattern = useRef([]);
     const userClickedPattern = useRef([]);
 
@@ -49,14 +49,14 @@ function Game() {
      * Increments the level
      */
     const nextLevel = () => {
-        setLevel((prev) => prev + 1);
+        dispatch({ type: "SET_NEXT_LEVEL" });
     }
 
     /**
      * Sets the level to 0
      */
     const resetGame = () => {
-        setLevel(0);
+        dispatch({ type: "RESET_GAME" });
         gamePattern.current = [];
     }
 
@@ -71,14 +71,14 @@ function Game() {
     //  * Handles start state
     //  */
     const handleGameStart = useCallback(() => {
-        setStatus(prevStatus => prevStatus = "started");
+        dispatch({ type: "SET_GAME_STARTED" });
     }, [status]);
 
     /**
      * Handles over state
      */
     const handleGameOver = useCallback(() => {
-        setStatus((prevStatus) => prevStatus = "over");
+        dispatch({ type: "SET_GAME_OVER" });
     }, [status]);
 
     /**
@@ -217,7 +217,7 @@ function Game() {
     }, [sound.current]);
 
     return (
-        <GameOverContext.Provider value={isGameOver}>
+        <>
             <Animated.View style={[styles.container, { backgroundColor: handleBackgroundColor }]}>
                 <View style={styles.header}>
                     <Header gameStatus={gameStatus} level={getLevel} />
@@ -240,7 +240,7 @@ function Game() {
                     }
                 </View>
             </Animated.View>
-        </GameOverContext.Provider>
+        </>
     )
 }
 

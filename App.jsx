@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import useFonts from './hooks/useFonts';
 import Game from './src/screens/Game';
 import Loading from './src/screens/Loading';
+import { GameProvider } from './context/GameContextProvider';
 
 function App() {
     /**
@@ -25,10 +26,9 @@ function App() {
     }
 
     return (
-        <>
+        <GameProvider>
             <Game />
-            <StatusBar style="auto" />
-        </>
+        </GameProvider>
     );
 }
 
