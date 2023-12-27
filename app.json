@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Simon Says",
-    "slug": "Simon Says Game",
+    "slug": "Simon-native",
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/IconKitchen-Output/web/icon-512.png",

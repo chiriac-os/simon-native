@@ -10,11 +10,10 @@
     "preview": {
       "distribution": "internal",
       "developmentClient": true,
-      "andriod": {
+      "android": {
         "buildType": "apk",
         "gradleCommand": ":app:assembleRelease"
       }
-
     },
     "production": {}
   },
