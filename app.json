@@ -21,10 +21,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/simon.png",
         "backgroundColor": "#011F3F"
-      }
+      },
+      "package": "simongame.rn72"
     },
     "web": {
       "favicon": "./assets/images/simon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e0fd1877-81af-48bf-9686-2080993db2e6"
+      }
     }
   }
 }
