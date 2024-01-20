@@ -8,9 +8,9 @@ import { Pressable, Text, StyleSheet, TouchableHighlight } from "react-native";
  */
 function StartButton({ title, callback, disabled }) {
     return (
-        <TouchableHighlight disabled={disabled} onPress={callback} style={[styles.button, disabled ? styles.disabled : styles.enabled]} underlayColor="#F7ECB5" >
+        <Pressable disabled={disabled} onPress={callback} style={[styles.button, disabled ? styles.disabled : styles.enabled]} underlayColor="#F7ECB5" >
             <Text style={styles.text}>{title}</Text>
-        </TouchableHighlight>
+        </Pressable>
     );
 }
 

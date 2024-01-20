@@ -54,7 +54,7 @@ const ColoredButton = React.forwardRef((props, ref) => {
         <AnimationContext.Provider value={{ animate }}>
             <View style={styles().view}>
                 <Animated.View style={{ opacity }}>
-                    <TouchableOpacity id={id} ref={ref} style={styles(color).button} onPress={() => onPress(id)} />
+                    <TouchableOpacity id={id} ref={ref} style={styles(color).button} onPress={() => onPress(id)} testID={id} />
                 </Animated.View>
             </View>
         </AnimationContext.Provider>
