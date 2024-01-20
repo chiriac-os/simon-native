@@ -24,11 +24,12 @@ const styles = StyleSheet.create({
     },
     text: {
         color: "#fff",
-        fontSize: 30,
-        fontFamily: "system-ui",
+        fontSize: 20,
+        fontFamily: "simon, system-ui",
     },
     activityIndicator__view: {
         padding: 20,
+        marginBottom: 20,
     }
 });
 

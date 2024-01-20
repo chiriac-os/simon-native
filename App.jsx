@@ -15,14 +15,15 @@ function App() {
      * Fetches the fonts
      */
     useFonts(() => {
-        setLoading(false);
+        const timeout = setTimeout(() => {
+            setLoading(false);
+        }, 1000);
+
+        return () => clearTimeout(timeout);
     }, []);
 
     if (loading) {
-
-        return (
-            <Loading />
-        );
+        return <Loading />;
     }
 
     return (
