@@ -17,3 +17,26 @@ Throughout the script there are comments which indicate what the code is doing a
 Happy gaming, 
 
 Andrei :)
+
+
+## Versions
+
+> [!INFO]
+> v1.0.8:
+Integration testing with `jest` and `@testing-library/react-native`.
+
+> [!INFO]
+> v1.0.7:
+Loading screen added and styles. `useFonts` custom hook modified and optimized.
+
+> [!INFO]
+> v1.0.6:
+Game state implemented with `useReducer` and `useContext`. A Game provider wrapps the app and provides the state and actions for managing it.
+
+> [!INFO]
+> v1.0.5
+Sounds added
+
+> [!INFO]
+> v1.0.4
+Animations added for the pressed and randomly chosen buttons as for the game screen on game over.
