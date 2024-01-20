@@ -28,8 +28,8 @@ function Header({ gameStatus, level }) {
 
     return (
         <>
-            <Text style={[styles.header, styles.title]}>{title}</Text>
-            <Text style={[styles.header, styles.subtitle]}>{subtitle}</Text>
+            <Text style={[styles.header, styles.title]} testID="title">{title}</Text>
+            <Text style={[styles.header, styles.subtitle]} testID="subtitle">{subtitle}</Text>
         </>
     )
 }
