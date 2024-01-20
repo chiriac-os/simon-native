@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { ActivityIndicator, View, Text, StyleSheet } from "react-native";
 
 /**
  * Renders the loading screen
@@ -6,10 +6,30 @@ import { View, Text } from "react-native";
  */
 function Loading() {
     return (
-        <View>
-            <Text>Loading...</Text>
+        <View style={styles.view}>
+            <View style={styles.activityIndicator__view}>
+                <ActivityIndicator size="large" color="#fff" />
+            </View>
+            <Text style={styles.text}>Loading...</Text>
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    view: {
+        flex: 1,
+        backgroundColor: "#011F3F",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    text: {
+        color: "#fff",
+        fontSize: 30,
+        fontFamily: "system-ui",
+    },
+    activityIndicator__view: {
+        padding: 20,
+    }
+});
 
 export default Loading;

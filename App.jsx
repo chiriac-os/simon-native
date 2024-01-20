@@ -14,12 +14,12 @@ function App() {
     /**
      * Fetches the fonts
      */
-    const fetchFonts = async () => {
-        await useFonts().then(() => setLoading(false));
-    };
+    useFonts(() => {
+        setLoading(false);
+    }, []);
 
     if (loading) {
-        fetchFonts();
+
         return (
             <Loading />
         );
