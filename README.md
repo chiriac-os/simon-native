@@ -6,7 +6,7 @@ After two years, this game was re-done with React just for fun and because I rea
 
 Throughout the script there are comments which indicate what the code is doing at any given moment. 
 
-> [!NOTE]
+> [!TIP]
 > Instructions for playing:
 
 1. Press the Start button to play.
@@ -21,22 +21,22 @@ Andrei :)
 
 ## Versions
 
-> [!INFO]
+> [!NOTE]
 > v1.0.8:
 Integration testing with `jest` and `@testing-library/react-native`.
 
-> [!INFO]
+> [!NOTE]
 > v1.0.7:
 Loading screen added and styles. `useFonts` custom hook modified and optimized.
 
-> [!INFO]
+> [!NOTE]
 > v1.0.6:
 Game state implemented with `useReducer` and `useContext`. A Game provider wrapps the app and provides the state and actions for managing it.
 
-> [!INFO]
+> [!NOTE]
 > v1.0.5
 Sounds added
 
-> [!INFO]
+> [!NOTE]
 > v1.0.4
 Animations added for the pressed and randomly chosen buttons as for the game screen on game over.
